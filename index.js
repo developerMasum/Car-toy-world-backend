@@ -45,6 +45,23 @@ async function run() {
       res.send(result);
     });
 
+// tab ---- 
+    app.get("/allToysByCategory/:text", async (req, res) => {
+        console.log(req.params.text);
+        if (req.params.text=='TRACTOR' || req.params.text=='racing' || req.params.text=='Dancing') {
+            const result = await toyCollection.find({sub_category: req.params.text}).toArray();
+            console.log(result);
+             return res.send(result)    
+        }
+        const result = await toyCollection.find({}).toArray();
+        res.send(result)
+
+     
+      });
+
+      
+
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
