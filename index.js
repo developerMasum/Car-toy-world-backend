@@ -56,17 +56,28 @@ async function run() {
       res.send(result);
     });
 
+    //search ar kajj -----------
+    // const indexKeys = { name: 1 };
+    // const indexOptions = { name: "ToyName" };
+    // const result = await toyCollection.createIndex(indexKeys, indexOptions);
 
 
-
-
-
-
-
-
-    
+    //     app.get('/allToySearch/:text', async (req, res) => {
+    //       const searchText = req.params.text;
+    //       try {
+    //         const result = await toyCollection.find({
+    //           ToyName: { $regex: searchText, $options: "i" }
+    //         }).toArray();
+    //         res.send(result);
+    //         console.log(result);
+    //       } catch (error) {
+    //         console.log(error);
+    //         res.status(500).send('Internal Server Error');
+    //       }
+    //     });
 
     // tab ----
+
     app.get("/allToysByCategory/:text", async (req, res) => {
       console.log(req.params.text);
       if (
@@ -126,18 +137,12 @@ async function run() {
       res.send(result);
     });
 
-
-
-
-
-
     app.get("/order/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const result = await orderCollection.findOne(query); 
+      const result = await orderCollection.findOne(query);
       res.send(result);
     });
-
 
     app.put("/order/:id", async (req, res) => {
       const id = req.params.id;
@@ -147,18 +152,13 @@ async function run() {
       const order = {
         $set: {
           price: update.price,
-          quantity:update.quantity,
+          quantity: update.quantity,
           details: update.details,
-      
         },
       };
-      const result = await orderCollection.updateOne(filter,order,option)
-      res.send(result)
+      const result = await orderCollection.updateOne(filter, order, option);
+      res.send(result);
     });
-
-
-
-
 
     // delete by id -
     app.delete("/order/:id", async (req, res) => {
