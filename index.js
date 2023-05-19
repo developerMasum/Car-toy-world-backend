@@ -40,49 +40,123 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const options = {
-        projection: { name:1, description:1,picture_url:1,available_quantity:1,rating:1,price:1,seller_name:1,name:1,seller_email:1}
+        projection: {
+          name: 1,
+          description: 1,
+          picture_url: 1,
+          available_quantity: 1,
+          rating: 1,
+          price: 1,
+          seller_name: 1,
+          name: 1,
+          seller_email: 1,
+        },
       };
       const result = await toyCollection.findOne(query, options);
       res.send(result);
     });
 
-// tab ---- 
+    // tab ----
     app.get("/allToysByCategory/:text", async (req, res) => {
-        console.log(req.params.text);
-        if (req.params.text=='TRACTOR' || req.params.text=='racing' || req.params.text=='Dancing') {
-            const result = await toyCollection.find({sub_category: req.params.text}).toArray();
-            console.log(result);
-             return res.send(result)    
-        }
-        const result = await toyCollection.find({}).toArray();
-        res.send(result)
+      console.log(req.params.text);
+      if (
+        req.params.text == "TRACTOR" ||
+        req.params.text == "racing" ||
+        req.params.text == "Dancing"
+      ) {
+        const result = await toyCollection
+          .find({ sub_category: req.params.text })
+          .toArray();
+        console.log(result);
+        return res.send(result);
+      }
+      const result = await toyCollection.find({}).toArray();
+      res.send(result);
+    });
 
-     
-      });
-
-       // show data in input field ar jinish pati
+    // show data in input field ar jinish pati
     app.get("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const options = {
-        projection: { name:1, description:1,picture_url:1,available_quantity:1,rating:1,price:1,seller_name:1,name:1,seller_email:1},
+        projection: {
+          name: 1,
+          description: 1,
+          picture_url: 1,
+          available_quantity: 1,
+          rating: 1,
+          price: 1,
+          seller_name: 1,
+          name: 1,
+          seller_email: 1,
+        },
       };
 
       const result = await toyCollection.findOne(query, options);
       res.send(result);
     });
 
+    // post data in order
+    app.post("/order", async (req, res) => {
+      const order = req.body;
+      console.log(order);
+      const result = await orderCollection.insertOne(order);
+      res.send(result);
+    });
 
-      // post data in order
-      app.post("/order", async (req, res) => {
-        const order = req.body;
-        console.log(order);
-        const result = await orderCollection.insertOne(order);
-        res.send(result);
-      });
+    app.get("/order", async (req, res) => {
+      console.log(req.query.email);
+      let query = {};
+      if (req.query?.email) {
+        query = { email: req.query.email };
+      }
 
+      const result = await orderCollection.find(query).toArray();
+
+      res.send(result);
+    });
+
+
+
+
+
+
+    app.get("/order/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await orderCollection.findOne(query);
+      res.send(result);
+    });
+
+
+    app.put("/order/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const update = req.body;
+      const order = {
+        $set: {
+          price: update.price,
+          quantity:update.quantity,
+          details: update.details,
       
+        },
+      };
+      const result = await orderCollection.updateOne(filter,order,option)
+      res.send(result)
+    });
 
+
+
+
+
+    // delete by id -
+    app.delete("/order/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await orderCollection.deleteOne(query);
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
