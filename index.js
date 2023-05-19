@@ -27,6 +27,7 @@ async function run() {
     // Send a ping to confirm a successful connection
 
     const toyCollection = client.db("torCarDB").collection("carCollection");
+    const orderCollection = client.db("torCarDB").collection("orderCollection");
 
     // step-1
     app.get("/toys", async (req, res) => {
@@ -57,6 +58,27 @@ async function run() {
         res.send(result)
 
      
+      });
+
+       // show data in input field ar jinish pati
+    app.get("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = {
+        projection: { name:1, description:1,picture_url:1,available_quantity:1,rating:1,price:1,seller_name:1,name:1,seller_email:1},
+      };
+
+      const result = await toyCollection.findOne(query, options);
+      res.send(result);
+    });
+
+
+      // post data in order
+      app.post("/order", async (req, res) => {
+        const order = req.body;
+        console.log(order);
+        const result = await orderCollection.insertOne(order);
+        res.send(result);
       });
 
       
