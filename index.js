@@ -56,25 +56,27 @@ async function run() {
       res.send(result);
     });
 
-    //search ar kajj -----------
-    // const indexKeys = { name: 1 };
-    // const indexOptions = { name: "ToyName" };
-    // const result = await toyCollection.createIndex(indexKeys, indexOptions);
+    // search ar
+// const indexKey = {toyName:1};
+// const indexOption = {name:'toyName'}
+// const result = await toyCollection.createIndex(indexKey,indexOption) 
 
-    //     app.get('/allToySearch/:text', async (req, res) => {
-    //       const searchText = req.params.text;
-    //       try {
-    //         const result = await toyCollection.find({
-    //           ToyName: { $regex: searchText, $options: "i" }
-    //         }).toArray();
-    //         res.send(result);
-    //         console.log(result);
-    //       } catch (error) {
-    //         console.log(error);
-    //         res.status(500).send('Internal Server Error');
-    //       }
-    //     });
-
+    app.get("/allToySearch/:text", async (req, res) => {
+      console.log(req.params.text);
+      const searchText = req.params.text;
+      try {
+        const result = await toyCollection.find({
+          name: {
+            $regex: searchText,
+            $options: "i"
+          }
+        }).toArray();
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred while searching for toys.");
+      }
+    });
     // tab ----
 
     app.get("/allToysByCategory/:text", async (req, res) => {
