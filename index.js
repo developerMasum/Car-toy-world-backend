@@ -61,7 +61,6 @@ async function run() {
     // const indexOptions = { name: "ToyName" };
     // const result = await toyCollection.createIndex(indexKeys, indexOptions);
 
-
     //     app.get('/allToySearch/:text', async (req, res) => {
     //       const searchText = req.params.text;
     //       try {
@@ -117,16 +116,13 @@ async function run() {
       res.send(result);
     });
 
-// post a new toy 
-app.post('/toys',async(req,res)=>{
-  const addNew = req.body;
-  console.log(addNew);
-  const result = await toyCollection.insertOne(addNew);
-  res.send(result)
-})
-
-
-
+    // post a new toy
+    app.post("/toys", async (req, res) => {
+      const addNew = req.body;
+      console.log(addNew);
+      const result = await toyCollection.insertOne(addNew);
+      res.send(result);
+    });
 
     // post data in order
     app.post("/order", async (req, res) => {
@@ -178,41 +174,6 @@ app.post('/toys',async(req,res)=>{
       const result = await orderCollection.deleteOne(query);
       res.send(result);
     });
-
-
-
-
-
-
-
-
-
-// API endpoint for search
-app.get('/api/products', async (req, res) => {
-  const query = req.query.q; // Get the search query from request query parameter
-  console.log(query);
-
-  try {
-    // Search products based on the query
-    const products = await toyCollection.find({ $text: { $search: query } }).toArray();
-
-    res.json(products);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-
-
-
-
-
-
-
-
-
-
 
     await client.db("admin").command({ ping: 1 });
     console.log(
