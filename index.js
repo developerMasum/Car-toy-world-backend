@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 
@@ -8,7 +9,6 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@cluster0.3besjfn.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -30,8 +30,8 @@ async function run() {
     const orderCollection = client.db("torCarDB").collection("orderCollection");
 
     // step-1
-    app.get("/toys", async (req, res) => {
-      const cursor = toyCollection.find();
+    app.get("/allToys", async (req, res) => {
+      const cursor = toyCollection.find({});
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -57,20 +57,22 @@ async function run() {
     });
 
     // search ar
-// const indexKey = {toyName:1};
-// const indexOption = {name:'toyName'}
-// const result = await toyCollection.createIndex(indexKey,indexOption) 
+    // const indexKey = {toyName:1};
+    // const indexOption = {name:'toyName'}
+    // const result = await toyCollection.createIndex(indexKey,indexOption)
 
     app.get("/allToySearch/:text", async (req, res) => {
       console.log(req.params.text);
       const searchText = req.params.text;
       try {
-        const result = await toyCollection.find({
-          name: {
-            $regex: searchText,
-            $options: "i"
-          }
-        }).toArray();
+        const result = await toyCollection
+          .find({
+            name: {
+              $regex: searchText,
+              $options: "i",
+            },
+          })
+          .toArray();
         res.send(result);
       } catch (error) {
         console.error(error);
@@ -97,26 +99,26 @@ async function run() {
     });
 
     // show data in input field ar jinish pati
-    app.get("/toys/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const options = {
-        projection: {
-          name: 1,
-          description: 1,
-          picture_url: 1,
-          available_quantity: 1,
-          rating: 1,
-          price: 1,
-          seller_name: 1,
-          name: 1,
-          seller_email: 1,
-        },
-      };
+    // app.get("/toys/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: new ObjectId(id) };
+    //   const options = {
+    //     projection: {
+    //       name: 1,
+    //       description: 1,
+    //       picture_url: 1,
+    //       available_quantity: 1,
+    //       rating: 1,
+    //       price: 1,
+    //       seller_name: 1,
+    //       name: 1,
+    //       seller_email: 1,
+    //     },
+    //   };
 
-      const result = await toyCollection.findOne(query, options);
-      res.send(result);
-    });
+    //   const result = await toyCollection.findOne(query, options);
+    //   res.send(result);
+    // });
 
     // post a new toy
     app.post("/toys", async (req, res) => {
