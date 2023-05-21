@@ -23,7 +23,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+
     // Send a ping to confirm a successful connection
 
     const toyCollection = client.db("torCarDB").collection("carCollection");
@@ -31,7 +31,7 @@ async function run() {
 
     // step-1
     app.get("/allToys", async (req, res) => {
-      const cursor = toyCollection.find();
+      const cursor = toyCollection.find().limit(20);
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -55,11 +55,6 @@ async function run() {
       const result = await toyCollection.findOne(query, options);
       res.send(result);
     });
-
-    // search ar
-    // const indexKey = {toyName:1};
-    // const indexOption = {name:'toyName'}
-    // const result = await toyCollection.createIndex(indexKey,indexOption)
 
     app.get("/allToySearch/:text", async (req, res) => {
       console.log(req.params.text);
@@ -97,28 +92,6 @@ async function run() {
       const result = await toyCollection.find({}).toArray();
       res.send(result);
     });
-
-    // show data in input field ar jinish pati
-    // app.get("/toys/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const options = {
-    //     projection: {
-    //       name: 1,
-    //       description: 1,
-    //       picture_url: 1,
-    //       available_quantity: 1,
-    //       rating: 1,
-    //       price: 1,
-    //       seller_name: 1,
-    //       name: 1,
-    //       seller_email: 1,
-    //     },
-    //   };
-
-    //   const result = await toyCollection.findOne(query, options);
-    //   res.send(result);
-    // });
 
     // post a new toy
     app.post("/toys", async (req, res) => {
@@ -184,7 +157,6 @@ async function run() {
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
   } finally {
-    // Ensures that the client will close when you finish/error
     // await client.close();
   }
 }
