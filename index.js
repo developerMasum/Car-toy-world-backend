@@ -31,7 +31,7 @@ async function run() {
 
     // step-1
     app.get("/allToys", async (req, res) => {
-      const cursor = toyCollection.find();
+      const cursor = toyCollection.find({});
       const result = await cursor.toArray();
       res.send(result);
     });
